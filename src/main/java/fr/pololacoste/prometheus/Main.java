@@ -1,14 +1,34 @@
 package fr.pololacoste.prometheus;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.server.MinecraftServer;
+import org.eclipse.jetty.server.Server;
+
+import java.net.InetSocketAddress;
 
 public class Main implements ModInitializer {
+
+    private Server server;
+
     @Override
     public void onInitialize() {
-        // This code runs as soon as Minecraft is in a mod-load-ready state.
-        // However, some things (like resources) may still be uninitialized.
-        // Proceed with mild caution.
+        ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStart);
+    }
 
-        System.out.println("Hello Fabric world!");
+    private void onServerStart(MinecraftServer minecraftServer) {
+        String host = "localhost";
+        int port = 9225;
+
+        InetSocketAddress address = new InetSocketAddress(host, port);
+        server = new Server(address);
+        server.setHandler(new MetricsController(minecraftServer));
+
+        try {
+            server.start();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
