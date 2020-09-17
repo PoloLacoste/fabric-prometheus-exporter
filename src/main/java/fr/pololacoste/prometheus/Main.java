@@ -17,7 +17,7 @@ public class Main implements ModInitializer {
     }
 
     private void onServerStart(MinecraftServer minecraftServer) {
-        String host = "localhost";
+        String host = "0.0.0.0";
         int port = 9225;
 
         InetSocketAddress address = new InetSocketAddress(host, port);
